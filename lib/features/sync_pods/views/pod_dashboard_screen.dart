@@ -9,11 +9,52 @@ import '../../botanical_garden/widgets/doodle_flower_painter.dart';
 
 import '../widgets/streak_details_sheet.dart';
 
-class PodDashboardScreen extends ConsumerWidget {
+class PodDashboardScreen extends ConsumerStatefulWidget {
   const PodDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PodDashboardScreen> createState() => _PodDashboardScreenState();
+}
+
+class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _summaryController;
+  late Animation<double> _expandAnimation;
+  bool _isSummaryExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _summaryController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _expandAnimation = CurvedAnimation(
+      parent: _summaryController,
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  @override
+  void dispose() {
+    _summaryController.dispose();
+    super.dispose();
+  }
+
+  void _toggleSummary([bool? show]) {
+    final target = show ?? !_isSummaryExpanded;
+    setState(() {
+      _isSummaryExpanded = target;
+    });
+    if (_isSummaryExpanded) {
+      _summaryController.forward();
+    } else {
+      _summaryController.reverse();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final podState = ref.watch(syncPodProvider);
 
     final bg = AppColors.bg(context);
@@ -21,6 +62,8 @@ class PodDashboardScreen extends ConsumerWidget {
     final border = AppColors.border(context);
     final textPrimary = AppColors.textPrimary(context);
     final textSecondary = AppColors.textSecondary(context);
+
+    final awakeCount = podState.members.where((m) => m.isAwake).length;
 
     return Scaffold(
       backgroundColor: bg,
@@ -37,6 +80,7 @@ class PodDashboardScreen extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
+          // Tap Streak Pill for Full Info (No arrow, just flame + count)
           InkWell(
             onTap: () => StreakDetailsSheet.show(context, podState),
             borderRadius: BorderRadius.circular(20),
@@ -53,8 +97,8 @@ class PodDashboardScreen extends ConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.flame, size: 15, color: AppColors.terracotta),
-                  const SizedBox(width: 4),
+                  const Icon(LucideIcons.flame, size: 16, color: AppColors.terracotta),
+                  const SizedBox(width: 5),
                   Text(
                     '${podState.sharedStreak}',
                     style: GoogleFonts.outfit(
@@ -63,299 +107,406 @@ class PodDashboardScreen extends ConsumerWidget {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  const SizedBox(width: 2),
-                  const Icon(LucideIcons.chevronDown, size: 12, color: AppColors.terracotta),
                 ],
               ),
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Pod Invite Code Box
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: surface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: border),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'POD INVITE CODE',
-                          style: GoogleFonts.outfit(
-                            color: textSecondary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          podState.podCode,
-                          style: GoogleFonts.outfit(
-                            color: textPrimary,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 2.0,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      AppToast.show(
-                        context,
-                        message: 'Pod Code copied to clipboard!',
-                        type: ToastType.info,
-                        icon: LucideIcons.copy,
-                      );
-                    },
-                    icon: const Icon(LucideIcons.copy, size: 16),
-                    label: const Text('Share Code'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.terracotta,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 28),
-
-            // Section 1: The Garden of Accountability
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'POD BOTANICAL DOODLE GARDEN',
-                    style: GoogleFonts.outfit(
-                      color: textSecondary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.0,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${podState.members.length} Members',
-                  style: GoogleFonts.inter(
-                    color: textSecondary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 14),
-
-            // Grid of Pod Members' Botanical Plot Cards
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.48,
-                crossAxisSpacing: 14,
-                mainAxisSpacing: 14,
-              ),
-              itemCount: podState.members.length,
-              itemBuilder: (context, index) {
-                final member = podState.members[index];
-                return Container(
-                  padding: const EdgeInsets.all(12),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notification) {
+          // Detect pull-down overscroll gesture from top
+          if (notification is OverscrollNotification && notification.overscroll < -10) {
+            if (!_isSummaryExpanded) {
+              _toggleSummary(true);
+            }
+          } else if (notification is ScrollUpdateNotification &&
+              notification.scrollDelta != null &&
+              notification.scrollDelta! > 10) {
+            // Collapse quick summary on downward scroll
+            if (_isSummaryExpanded) {
+              _toggleSummary(false);
+            }
+          }
+          return false;
+        },
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Pull-down Animated Quick Streak Summary Banner
+              SizeTransition(
+                sizeFactor: _expandAnimation,
+                axisAlignment: -1.0,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 16, top: 4),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: surface,
+                    color: AppColors.terracotta.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: member.character.hasFire
-                          ? AppColors.warningFire.withValues(alpha: 0.6)
-                          : border,
-                      width: member.character.hasFire ? 2 : 1,
+                      color: AppColors.terracotta.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Member status top header
+                      Row(
+                        children: [
+                          const Icon(LucideIcons.flame, size: 20, color: AppColors.terracotta),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'QUICK STREAK SUMMARY',
+                              style: GoogleFonts.outfit(
+                                color: AppColors.terracotta,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(LucideIcons.x, size: 16),
+                            color: textSecondary,
+                            onPressed: () => _toggleSummary(false),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            child: Text(
-                              member.name,
-                              style: GoogleFonts.outfit(
-                                color: textPrimary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          Text(
+                            '🔥 ${podState.sharedStreak}-Day Shared Streak',
+                            style: GoogleFonts.outfit(
+                              color: textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: member.isAwake
-                                  ? const Color(0xFF24338A).withValues(alpha: 0.15)
-                                  : textSecondary.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              member.isAwake ? 'AWAKE' : 'ASLEEP',
-                              style: GoogleFonts.outfit(
-                                color: member.isAwake
-                                    ? const Color(0xFF24338A)
-                                    : textSecondary,
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          Text(
+                            '$awakeCount / ${podState.members.length} Awake',
+                            style: GoogleFonts.inter(
+                              color: textSecondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
-
-                      // Plant hand-drawn ink doodle render
-                      DoodleFlowerWidget(
-                        size: 78,
-                        character: member.character,
-                      ),
-
-                      // Local Phase & Water Action
-                      Column(
-                        children: [
-                          Text(
-                            member.localPhase,
-                            style: GoogleFonts.inter(
-                              color: textSecondary,
-                              fontSize: 11,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 6),
-                          if (member.character.hasFire)
-                            SizedBox(
-                              width: double.infinity,
-                              height: 32,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  ref
-                                      .read(syncPodProvider.notifier)
-                                      .sendWateringNudge(member.id);
-                                  AppToast.show(
-                                    context,
-                                    message: 'Sent Watering Can Nudge to ${member.name}!',
-                                    type: ToastType.success,
-                                    icon: LucideIcons.droplets,
-                                  );
-                                },
-                                icon: const Icon(LucideIcons.droplets, size: 12),
-                                label: const Text('WATER & NUDGE', style: TextStyle(fontSize: 9)),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.gardenWater,
-                                  foregroundColor: Colors.white,
-                                  padding: EdgeInsets.zero,
-                                  elevation: 0,
-                                ),
-                              ),
-                            )
-                          else
+                      const SizedBox(height: 12),
+                      InkWell(
+                        onTap: () {
+                          _toggleSummary(false);
+                          StreakDetailsSheet.show(context, podState);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
                             Text(
-                              '${member.character.name} • Normal',
-                              style: GoogleFonts.outfit(
-                                color: AppColors.sageGreen,
+                              'Tap for full streak breakdown & badges',
+                              style: GoogleFonts.inter(
+                                color: AppColors.terracotta,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(LucideIcons.arrowRight, size: 12, color: AppColors.terracotta),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // Pod Invite Code Box
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: border),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'POD INVITE CODE',
+                            style: GoogleFonts.outfit(
+                              color: textSecondary,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            podState.podCode,
+                            style: GoogleFonts.outfit(
+                              color: textPrimary,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 2.0,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        AppToast.show(
+                          context,
+                          message: 'Pod Code copied to clipboard!',
+                          type: ToastType.info,
+                          icon: LucideIcons.copy,
+                        );
+                      },
+                      icon: const Icon(LucideIcons.copy, size: 16),
+                      label: const Text('Share Code'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.terracotta,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              // Section 1: The Garden of Accountability
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'POD BOTANICAL DOODLE GARDEN',
+                      style: GoogleFonts.outfit(
+                        color: textSecondary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.0,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${podState.members.length} Members',
+                    style: GoogleFonts.inter(
+                      color: textSecondary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 14),
+
+              // Grid of Pod Members' Botanical Plot Cards
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.48,
+                  crossAxisSpacing: 14,
+                  mainAxisSpacing: 14,
+                ),
+                itemCount: podState.members.length,
+                itemBuilder: (context, index) {
+                  final member = podState.members[index];
+                  return Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: surface,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: member.character.hasFire
+                            ? AppColors.warningFire.withValues(alpha: 0.6)
+                            : border,
+                        width: member.character.hasFire ? 2 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Member status top header
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                member.name,
+                                style: GoogleFonts.outfit(
+                                  color: textPrimary,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: member.isAwake
+                                    ? const Color(0xFF24338A).withValues(alpha: 0.15)
+                                    : textSecondary.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                member.isAwake ? 'AWAKE' : 'ASLEEP',
+                                style: GoogleFonts.outfit(
+                                  color: member.isAwake
+                                      ? const Color(0xFF24338A)
+                                      : textSecondary,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Plant hand-drawn ink doodle render
+                        DoodleFlowerWidget(
+                          size: 78,
+                          character: member.character,
+                        ),
+
+                        // Local Phase & Water Action
+                        Column(
+                          children: [
+                            Text(
+                              member.localPhase,
+                              style: GoogleFonts.inter(
+                                color: textSecondary,
+                                fontSize: 11,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-
-            const SizedBox(height: 28),
-
-            // Section 2: LDR Moon & Sun Bridge
-            Text(
-              'CROSS-TIMEZONE MOON & SUN BRIDGE',
-              style: GoogleFonts.outfit(
-                color: textSecondary,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF16181D), Color(0xFF384353)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Row(
-                children: [
-                  const Icon(LucideIcons.moon, size: 36, color: Color(0xFFFFB74D)),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Tokyo Overlap Window',
-                          style: GoogleFonts.outfit(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Shared Talk Window in 3 hrs 15 mins (Tokyo Wind-Down vs. London Morning Wake)',
-                          style: GoogleFonts.inter(
-                            color: Colors.white70,
-                            fontSize: 13,
-                          ),
+                            const SizedBox(height: 6),
+                            if (member.character.hasFire)
+                              SizedBox(
+                                width: double.infinity,
+                                height: 32,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    ref
+                                        .read(syncPodProvider.notifier)
+                                        .sendWateringNudge(member.id);
+                                    AppToast.show(
+                                      context,
+                                      message: 'Sent Watering Can Nudge to ${member.name}!',
+                                      type: ToastType.success,
+                                      icon: LucideIcons.droplets,
+                                    );
+                                  },
+                                  icon: const Icon(LucideIcons.droplets, size: 12),
+                                  label: const Text('WATER & NUDGE', style: TextStyle(fontSize: 9)),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.gardenWater,
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.zero,
+                                    elevation: 0,
+                                  ),
+                                ),
+                              )
+                            else
+                              Text(
+                                '${member.character.name} • Normal',
+                                style: GoogleFonts.outfit(
+                                  color: AppColors.sageGreen,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                          ],
                         ),
                       ],
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
-            ),
 
-            // Bottom space for floating navigation bar
-            const SizedBox(height: 110),
-          ],
+              const SizedBox(height: 28),
+
+              // Section 2: LDR Moon & Sun Bridge
+              Text(
+                'CROSS-TIMEZONE MOON & SUN BRIDGE',
+                style: GoogleFonts.outfit(
+                  color: textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF16181D), Color(0xFF384353)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(LucideIcons.moon, size: 36, color: Color(0xFFFFB74D)),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Tokyo Overlap Window',
+                            style: GoogleFonts.outfit(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Shared Talk Window in 3 hrs 15 mins (Tokyo Wind-Down vs. London Morning Wake)',
+                            style: GoogleFonts.inter(
+                              color: Colors.white70,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Bottom space for floating navigation bar
+              const SizedBox(height: 110),
+            ],
+          ),
         ),
       ),
     );
