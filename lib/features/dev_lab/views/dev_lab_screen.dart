@@ -496,9 +496,11 @@ class _DevLabScreenState extends ConsumerState<DevLabScreen>
                   children: [
                     const Text('Soundscape', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                     DropdownButton<String>(
-                      value: _testSoundscape,
+                      value: ['Morning Birds', 'Morning Dew', 'Soft Rain', 'Zen Bowls', 'Forest Stream', 'Mountain Stream'].contains(_testSoundscape)
+                          ? _testSoundscape
+                          : 'Morning Birds',
                       underline: const SizedBox(),
-                      items: ['Morning Birds', 'Soft Rain', 'Zen Bowls', 'Forest Stream']
+                      items: ['Morning Birds', 'Morning Dew', 'Soft Rain', 'Zen Bowls', 'Forest Stream', 'Mountain Stream']
                           .map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 13))))
                           .toList(),
                       onChanged: (val) {

@@ -36,10 +36,12 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
 
   final List<String> _soundscapes = [
     'Morning Birds',
+    'Morning Dew',
     'Mountain Stream',
     'Tibetan Singing Bowls',
     'Soft Rain on Leaves',
     'Muted Chimes',
+    'Ocean Waves',
     'Silent Visual Only',
   ];
 
@@ -60,9 +62,15 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
     _repeatDays = List.from(a?.repeatDays ?? [1, 2, 3, 4, 5]);
     _ambientDuration = a?.ambientDurationMinutes ?? 15;
     _soundscape = a?.soundscape ?? 'Morning Birds';
+    if (!_soundscapes.contains(_soundscape)) {
+      _soundscapes.add(_soundscape);
+    }
     _volume = a?.volumeLevel ?? 0.8;
     _fadeDuration = a?.gradualFadeDurationSeconds ?? 60;
     _vibration = a?.vibrationPattern ?? 'Gentle Waves';
+    if (!_vibrations.contains(_vibration)) {
+      _vibrations.add(_vibration);
+    }
     _snoozeDuration = a?.snoozeDurationMinutes ?? 9;
     _maxSnooze = a?.maxSnoozeCount ?? 3;
     _smartSnooze = a?.isSmartSnooze ?? false;
