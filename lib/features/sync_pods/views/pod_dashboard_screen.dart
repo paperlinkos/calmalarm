@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_toast.dart';
 import '../../botanical_garden/widgets/doodle_flower_painter.dart';
 
+import '../../analytics/views/analytics_screen.dart';
 import '../widgets/animated_streak_canopy.dart';
 import '../widgets/streak_details_sheet.dart';
 
@@ -66,6 +67,17 @@ class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen> {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
+          IconButton(
+            icon: const Icon(LucideIcons.lineChart, size: 20),
+            color: textPrimary,
+            tooltip: 'Analytics & Insights',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AnalyticsScreen()),
+              );
+            },
+          ),
           // Tap Streak Pill for Full Info (Clean 🔥 12)
           InkWell(
             onTap: () => StreakDetailsSheet.show(context, podState),
@@ -173,66 +185,7 @@ class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen> {
 
                 const SizedBox(height: 8),
 
-                // Pod Invite Code Box
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: border),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'POD INVITE CODE',
-                              style: GoogleFonts.outfit(
-                                color: textSecondary,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              podState.podCode,
-                              style: GoogleFonts.outfit(
-                                color: textPrimary,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 2.0,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          AppToast.show(
-                            context,
-                            message: 'Pod Code copied to clipboard!',
-                            type: ToastType.info,
-                            icon: LucideIcons.copy,
-                          );
-                        },
-                        icon: const Icon(LucideIcons.copy, size: 16),
-                        label: const Text('Share Code'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.terracotta,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
 
-                const SizedBox(height: 28),
 
                 // Section 1: The Garden of Accountability
                 Row(

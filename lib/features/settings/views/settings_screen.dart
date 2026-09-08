@@ -3,10 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_toast.dart';
+import '../../analytics/views/analytics_screen.dart';
 import '../../dev_lab/views/dev_lab_screen.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/theme_provider.dart';
+import '../../../core/services/sync_pod_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -19,10 +21,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _use24Hour = false;
   int _defaultSnooze = 9;
   int _defaultSunrise = 15;
-  String _themeMode = 'Linen Day';
 
   @override
   Widget build(BuildContext context) {
+    final podState = ref.watch(syncPodProvider);
+
     final bg = AppColors.bg(context);
     final surface = AppColors.surface(context);
     final border = AppColors.border(context);
@@ -53,7 +56,136 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Android Battery Optimization Warning / Tip
+            // 1. Pod Invite Code & Social Accountability Section
+            Text(
+              'SYNC POD & SOCIAL ACCOUNTABILITY',
+              style: GoogleFonts.outfit(
+                color: textSecondary,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.1,
+              ),
+            ),
+            const SizedBox(height: 10),
+            _buildSettingsContainer(
+              context: context,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            podState.podName,
+                            style: GoogleFonts.outfit(
+                              color: textPrimary,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'INVITE CODE: ${podState.podCode}',
+                            style: GoogleFonts.outfit(
+                              color: AppColors.terracotta,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        AppToast.show(
+                          context,
+                          message: 'Pod Code copied to clipboard!',
+                          type: ToastType.info,
+                          icon: LucideIcons.copy,
+                        );
+                      },
+                      icon: const Icon(LucideIcons.copy, size: 14),
+                      label: const Text('Share Code', style: TextStyle(fontSize: 11)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.terracotta,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(color: border),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.sageGreen.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(LucideIcons.userPlus, size: 18, color: AppColors.sageGreen),
+                  ),
+                  title: Text('Join or Create Another Pod', style: GoogleFonts.outfit(color: textPrimary, fontWeight: FontWeight.w700, fontSize: 14)),
+                  subtitle: Text('Sync alarm wake windows with friends & family', style: GoogleFonts.inter(color: textSecondary, fontSize: 12)),
+                  trailing: Icon(LucideIcons.chevronRight, size: 18, color: textSecondary),
+                  onTap: () {
+                    AppToast.show(
+                      context,
+                      message: 'Pod creation flow coming soon!',
+                      type: ToastType.info,
+                      icon: LucideIcons.sprout,
+                    );
+                  },
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // 2. Wake & Sleep Analytics Shortcut
+            Text(
+              'ANALYTICS & SLEEP INSIGHTS',
+              style: GoogleFonts.outfit(
+                color: textSecondary,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.1,
+              ),
+            ),
+            const SizedBox(height: 10),
+            _buildSettingsContainer(
+              context: context,
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF6C63FF).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(LucideIcons.lineChart, size: 20, color: Color(0xFF6C63FF)),
+                  ),
+                  title: Text('Wake & Sleep Analytics', style: GoogleFonts.outfit(color: textPrimary, fontWeight: FontWeight.w700, fontSize: 15)),
+                  subtitle: Text('Consistency charts, snooze metrics, and pod synergy stats', style: GoogleFonts.inter(color: textSecondary, fontSize: 12)),
+                  trailing: Icon(LucideIcons.chevronRight, size: 18, color: textSecondary),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AnalyticsScreen()),
+                    );
+                  },
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // 3. Android Battery Optimization Warning / Tip
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -114,7 +246,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
             const SizedBox(height: 24),
 
-            // 2. Time & Display Preferences
+            // 4. Time & Display Preferences
             Text(
               'DISPLAY & TIME',
               style: GoogleFonts.outfit(
@@ -191,7 +323,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
             const SizedBox(height: 24),
 
-            // 3. Default Alarm Behavior
+            // 5. Default Alarm Behavior
             Text(
               'ALARM DEFAULTS',
               style: GoogleFonts.outfit(
@@ -276,7 +408,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
             const SizedBox(height: 24),
 
-            // 4. Developer & Testing Lab
+            // 6. Developer & Testing Lab
             Text(
               'EXPERIMENTS & TESTING',
               style: GoogleFonts.outfit(
@@ -315,7 +447,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
             const SizedBox(height: 24),
 
-            // 5. Open Source & F-Droid Compliance
+            // 7. Open Source & F-Droid Compliance
             Text(
               'ABOUT CALMALARM',
               style: GoogleFonts.outfit(
