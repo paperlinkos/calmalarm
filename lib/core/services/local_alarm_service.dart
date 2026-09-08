@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/alarm.dart';
+import 'notification_alarm_service.dart';
 
 final alarmListProvider = StateNotifierProvider<AlarmListNotifier, List<Alarm>>((ref) {
   return AlarmListNotifier();
@@ -57,17 +58,37 @@ class AlarmListNotifier extends StateNotifier<List<Alarm>> {
             snoozePenaltyEnabled: false,
             dismissChallenge: 'Slide to Dismiss',
           ),
-        ]);
+        ]) {
+    _syncAllScheduledNotifications();
+  }
+
+  void _syncAllScheduledNotifications() {
+    for (final alarm in state) {
+      if (alarm.isEnabled) {
+        NotificationAlarmService().scheduleAlarmNotification(alarm);
+      }
+    }
+  }
 
   void toggleAlarm(String id) {
     state = [
       for (final alarm in state)
         if (alarm.id == id) alarm.copyWith(isEnabled: !alarm.isEnabled) else alarm
     ];
+
+    final updated = state.firstWhere((a) => a.id == id);
+    if (updated.isEnabled) {
+      NotificationAlarmService().scheduleAlarmNotification(updated);
+    } else {
+      NotificationAlarmService().cancelAlarmNotification(updated.id);
+    }
   }
 
   void addAlarm(Alarm alarm) {
     state = [...state, alarm];
+    if (alarm.isEnabled) {
+      NotificationAlarmService().scheduleAlarmNotification(alarm);
+    }
   }
 
   void updateAlarm(Alarm updated) {
@@ -75,9 +96,15 @@ class AlarmListNotifier extends StateNotifier<List<Alarm>> {
       for (final alarm in state)
         if (alarm.id == updated.id) updated else alarm
     ];
+    if (updated.isEnabled) {
+      NotificationAlarmService().scheduleAlarmNotification(updated);
+    } else {
+      NotificationAlarmService().cancelAlarmNotification(updated.id);
+    }
   }
 
   void deleteAlarm(String id) {
     state = state.where((a) => a.id != id).toList();
+    NotificationAlarmService().cancelAlarmNotification(id);
   }
 }
