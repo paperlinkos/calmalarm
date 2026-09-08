@@ -14,35 +14,43 @@ class PodDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final podState = ref.watch(syncPodProvider);
 
+    final bg = AppColors.bg(context);
+    final surface = AppColors.surface(context);
+    final border = AppColors.border(context);
+    final textPrimary = AppColors.textPrimary(context);
+    final textSecondary = AppColors.textSecondary(context);
+
     return Scaffold(
+      backgroundColor: bg,
       appBar: AppBar(
-        backgroundColor: AppColors.linenBackground,
+        backgroundColor: bg,
         elevation: 0,
         title: Text(
           podState.podName,
           style: GoogleFonts.outfit(
-            color: AppColors.linenTextPrimary,
-            fontSize: 20,
+            color: textPrimary,
+            fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.sageGreen.withOpacity(0.15),
+              color: AppColors.sageGreen.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
-                const Icon(LucideIcons.flame, size: 16, color: AppColors.terracotta),
-                const SizedBox(width: 6),
+                const Icon(LucideIcons.flame, size: 15, color: AppColors.terracotta),
+                const SizedBox(width: 4),
                 Text(
                   '${podState.sharedStreak} Day Streak',
                   style: GoogleFonts.outfit(
                     color: AppColors.terracotta,
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -52,6 +60,7 @@ class PodDashboardScreen extends ConsumerWidget {
         ],
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,9 +69,9 @@ class PodDashboardScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.linenSurface,
+                color: surface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.linenSurfaceBorder),
+                border: Border.all(color: border),
               ),
               child: Row(
                 children: [
@@ -73,7 +82,7 @@ class PodDashboardScreen extends ConsumerWidget {
                         Text(
                           'POD INVITE CODE',
                           style: GoogleFonts.outfit(
-                            color: AppColors.linenTextSecondary,
+                            color: textSecondary,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -81,7 +90,7 @@ class PodDashboardScreen extends ConsumerWidget {
                         Text(
                           podState.podCode,
                           style: GoogleFonts.outfit(
-                            color: AppColors.linenTextPrimary,
+                            color: textPrimary,
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 2.0,
@@ -125,7 +134,7 @@ class PodDashboardScreen extends ConsumerWidget {
                   child: Text(
                     'POD BOTANICAL DOODLE GARDEN',
                     style: GoogleFonts.outfit(
-                      color: AppColors.linenTextSecondary,
+                      color: textSecondary,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.0,
@@ -137,7 +146,7 @@ class PodDashboardScreen extends ConsumerWidget {
                 Text(
                   '${podState.members.length} Members',
                   style: GoogleFonts.inter(
-                    color: AppColors.linenTextSecondary,
+                    color: textSecondary,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
@@ -153,7 +162,7 @@ class PodDashboardScreen extends ConsumerWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.58,
+                childAspectRatio: 0.53,
                 crossAxisSpacing: 14,
                 mainAxisSpacing: 14,
               ),
@@ -163,12 +172,12 @@ class PodDashboardScreen extends ConsumerWidget {
                 return Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.linenSurface,
+                    color: surface,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: member.character.hasFire
                           ? AppColors.warningFire.withValues(alpha: 0.6)
-                          : AppColors.linenSurfaceBorder,
+                          : border,
                       width: member.character.hasFire ? 2 : 1,
                     ),
                   ),
@@ -183,7 +192,7 @@ class PodDashboardScreen extends ConsumerWidget {
                             child: Text(
                               member.name,
                               style: GoogleFonts.outfit(
-                                color: AppColors.linenTextPrimary,
+                                color: textPrimary,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -196,7 +205,7 @@ class PodDashboardScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               color: member.isAwake
                                   ? const Color(0xFF24338A).withValues(alpha: 0.15)
-                                  : AppColors.linenTextSecondary.withValues(alpha: 0.1),
+                                  : textSecondary.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
@@ -204,7 +213,7 @@ class PodDashboardScreen extends ConsumerWidget {
                               style: GoogleFonts.outfit(
                                 color: member.isAwake
                                     ? const Color(0xFF24338A)
-                                    : AppColors.linenTextSecondary,
+                                    : textSecondary,
                                 fontSize: 9,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -225,7 +234,7 @@ class PodDashboardScreen extends ConsumerWidget {
                           Text(
                             member.localPhase,
                             style: GoogleFonts.inter(
-                              color: AppColors.linenTextSecondary,
+                              color: textSecondary,
                               fontSize: 11,
                             ),
                             maxLines: 1,
@@ -277,13 +286,13 @@ class PodDashboardScreen extends ConsumerWidget {
               },
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 28),
 
             // Section 2: LDR Moon & Sun Bridge
             Text(
               'CROSS-TIMEZONE MOON & SUN BRIDGE',
               style: GoogleFonts.outfit(
-                color: AppColors.linenTextSecondary,
+                color: textSecondary,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2,
@@ -331,6 +340,9 @@ class PodDashboardScreen extends ConsumerWidget {
                 ],
               ),
             ),
+
+            // Bottom space for floating navigation bar
+            const SizedBox(height: 110),
           ],
         ),
       ),

@@ -352,7 +352,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ],
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 110),
           ],
         ),
       ),
