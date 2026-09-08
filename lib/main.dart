@@ -5,6 +5,7 @@ import 'core/services/live_alarm_ticker.dart';
 import 'core/services/local_alarm_service.dart';
 import 'core/services/notification_alarm_service.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_provider.dart';
 import 'features/ambient_wake/views/alarm_ringing_screen.dart';
 import 'features/navigation/main_nav_screen.dart';
 
@@ -54,13 +55,20 @@ class _CalmAlarmAppState extends ConsumerState<CalmAlarmApp> {
     // Keep live alarm ticker active
     ref.watch(liveAlarmTickerProvider);
 
+    final themeOption = ref.watch(themeModeProvider);
+    final themeMode = switch (themeOption) {
+      AppThemeOption.linenDay => ThemeMode.light,
+      AppThemeOption.midnightOled => ThemeMode.dark,
+      AppThemeOption.system => ThemeMode.system,
+    };
+
     return MaterialApp(
       title: 'CalmAlarm — Social & Ambient Wake',
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
       theme: AppTheme.lightLinenTheme(context),
       darkTheme: AppTheme.darkMidnightTheme(context),
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       home: const MainNavScreen(),
     );
   }

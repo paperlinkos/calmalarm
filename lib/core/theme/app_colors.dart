@@ -25,6 +25,22 @@ class AppColors {
   static const Color warningFire = Color(0xFFFF5252);
   static const Color weedThistle = Color(0xFF8D6E63);
 
+  // Dynamic Context-Aware Colors
+  static Color bg(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? midnightBackground : linenBackground;
+
+  static Color surface(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? midnightSurface : linenSurface;
+
+  static Color border(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? midnightSurfaceBorder : linenSurfaceBorder;
+
+  static Color textPrimary(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? midnightTextPrimary : linenTextPrimary;
+
+  static Color textSecondary(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? midnightTextSecondary : linenTextSecondary;
+
   // Circadian Sunrise Gradients
   static const LinearGradient sunriseGradient = LinearGradient(
     begin: Alignment.bottomCenter,

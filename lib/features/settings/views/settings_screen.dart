@@ -5,14 +5,17 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_toast.dart';
 import '../../dev_lab/views/dev_lab_screen.dart';
 
-class SettingsScreen extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/theme/theme_provider.dart';
+
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _use24Hour = false;
   int _defaultSnooze = 9;
   int _defaultSunrise = 15;
@@ -153,7 +156,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     const SizedBox(width: 8),
                     DropdownButton<String>(
-                      value: _themeMode,
+                      value: ref.watch(themeModeProvider).label,
                       underline: const SizedBox(),
                       items: const [
                         DropdownMenuItem(value: 'Linen Day', child: Text('Linen Day (Light)')),
@@ -161,7 +164,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         DropdownMenuItem(value: 'System', child: Text('System Default')),
                       ],
                       onChanged: (val) {
-                        if (val != null) setState(() => _themeMode = val);
+                        if (val != null) {
+                          ref.read(themeModeProvider.notifier).setThemeFromLabel(val);
+                          AppToast.show(
+                            context,
+                            message: 'Theme switched to $val',
+                            type: ToastType.info,
+                            icon: LucideIcons.sparkles,
+                          );
+                        }
                       },
                     ),
                   ],

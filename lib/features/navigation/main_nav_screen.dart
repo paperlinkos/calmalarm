@@ -27,8 +27,10 @@ class _MainNavScreenState extends State<MainNavScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isOled = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: _currentIndex == 2 ? const Color(0xFF07080A) : AppColors.linenBackground,
+      backgroundColor: _currentIndex == 2 ? const Color(0xFF07080A) : AppColors.bg(context),
       body: Stack(
         children: [
           // Active Screen
@@ -42,15 +44,15 @@ class _MainNavScreenState extends State<MainNavScreen> {
             left: 20,
             right: 20,
             bottom: 24,
-            child: _buildFloatingCapsuleBar(),
+            child: _buildFloatingCapsuleBar(isOled),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFloatingCapsuleBar() {
-    final isDark = _currentIndex == 2;
+  Widget _buildFloatingCapsuleBar(bool isOled) {
+    final isDark = _currentIndex == 2 || isOled;
 
     return Container(
       height: 64,
@@ -75,18 +77,18 @@ class _MainNavScreenState extends State<MainNavScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(0, LucideIcons.alarmClock, 'Alarms'),
-          _buildNavItem(1, LucideIcons.sprout, 'Garden'),
-          _buildNavItem(2, LucideIcons.moon, 'Nightstand'),
-          _buildNavItem(3, LucideIcons.settings, 'Settings'),
+          _buildNavItem(0, LucideIcons.alarmClock, 'Alarms', isOled),
+          _buildNavItem(1, LucideIcons.sprout, 'Garden', isOled),
+          _buildNavItem(2, LucideIcons.moon, 'Nightstand', isOled),
+          _buildNavItem(3, LucideIcons.settings, 'Settings', isOled),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
+  Widget _buildNavItem(int index, IconData icon, String label, bool isOled) {
     final isSelected = _currentIndex == index;
-    final isDark = _currentIndex == 2;
+    final isDark = _currentIndex == 2 || isOled;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

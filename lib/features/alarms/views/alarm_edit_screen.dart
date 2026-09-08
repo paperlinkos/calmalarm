@@ -616,23 +616,35 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              DropdownButton<int>(
-                value: _fadeDuration,
-                underline: const SizedBox(),
-                items: const [
-                  DropdownMenuItem(value: 0, child: Text('Instant')),
-                  DropdownMenuItem(value: 30, child: Text('30 sec')),
-                  DropdownMenuItem(value: 60, child: Text('1 min')),
-                  DropdownMenuItem(value: 120, child: Text('2 min')),
-                  DropdownMenuItem(value: 300, child: Text('5 min')),
-                ],
-                onChanged: (val) {
-                  if (val != null) setState(() => _fadeDuration = val);
-                },
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.linenBackground,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.linenSurfaceBorder),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: _fadeDuration,
+                    isDense: true,
+                    icon: const Icon(LucideIcons.chevronDown, size: 16, color: AppColors.linenTextSecondary),
+                    style: GoogleFonts.outfit(color: AppColors.linenTextPrimary, fontSize: 13, fontWeight: FontWeight.w600),
+                    items: const [
+                      DropdownMenuItem(value: 0, child: Text('Instant')),
+                      DropdownMenuItem(value: 30, child: Text('30 sec')),
+                      DropdownMenuItem(value: 60, child: Text('1 min')),
+                      DropdownMenuItem(value: 120, child: Text('2 min')),
+                      DropdownMenuItem(value: 300, child: Text('5 min')),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) setState(() => _fadeDuration = val);
+                    },
+                  ),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           // Vibration Pattern
           DropdownButtonFormField<String>(
             initialValue: _vibration,
@@ -691,19 +703,31 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                 ),
               ),
               const SizedBox(width: 8),
-              DropdownButton<int>(
-                value: _snoozeDuration,
-                underline: const SizedBox(),
-                items: const [
-                  DropdownMenuItem(value: 5, child: Text('5 min')),
-                  DropdownMenuItem(value: 9, child: Text('9 min (Standard)')),
-                  DropdownMenuItem(value: 10, child: Text('10 min')),
-                  DropdownMenuItem(value: 15, child: Text('15 min')),
-                  DropdownMenuItem(value: 20, child: Text('20 min')),
-                ],
-                onChanged: (val) {
-                  if (val != null) setState(() => _snoozeDuration = val);
-                },
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.linenBackground,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.linenSurfaceBorder),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: _snoozeDuration,
+                    isDense: true,
+                    icon: const Icon(LucideIcons.chevronDown, size: 16, color: AppColors.linenTextSecondary),
+                    style: GoogleFonts.outfit(color: AppColors.linenTextPrimary, fontSize: 13, fontWeight: FontWeight.w600),
+                    items: const [
+                      DropdownMenuItem(value: 5, child: Text('5 min')),
+                      DropdownMenuItem(value: 9, child: Text('9 min (Std)')),
+                      DropdownMenuItem(value: 10, child: Text('10 min')),
+                      DropdownMenuItem(value: 15, child: Text('15 min')),
+                      DropdownMenuItem(value: 20, child: Text('20 min')),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) setState(() => _snoozeDuration = val);
+                    },
+                  ),
+                ),
               ),
             ],
           ),
@@ -724,19 +748,31 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                 ),
               ),
               const SizedBox(width: 8),
-              DropdownButton<int>(
-                value: _maxSnooze,
-                underline: const SizedBox(),
-                items: const [
-                  DropdownMenuItem(value: 0, child: Text('No Snooze')),
-                  DropdownMenuItem(value: 1, child: Text('1 time')),
-                  DropdownMenuItem(value: 2, child: Text('2 times')),
-                  DropdownMenuItem(value: 3, child: Text('3 times')),
-                  DropdownMenuItem(value: 99, child: Text('Unlimited')),
-                ],
-                onChanged: (val) {
-                  if (val != null) setState(() => _maxSnooze = val);
-                },
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.linenBackground,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.linenSurfaceBorder),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: _maxSnooze,
+                    isDense: true,
+                    icon: const Icon(LucideIcons.chevronDown, size: 16, color: AppColors.linenTextSecondary),
+                    style: GoogleFonts.outfit(color: AppColors.linenTextPrimary, fontSize: 13, fontWeight: FontWeight.w600),
+                    items: const [
+                      DropdownMenuItem(value: 0, child: Text('No Snooze')),
+                      DropdownMenuItem(value: 1, child: Text('1 time')),
+                      DropdownMenuItem(value: 2, child: Text('2 times')),
+                      DropdownMenuItem(value: 3, child: Text('3 times')),
+                      DropdownMenuItem(value: 99, child: Text('Unlimited')),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) setState(() => _maxSnooze = val);
+                    },
+                  ),
+                ),
               ),
             ],
           ),

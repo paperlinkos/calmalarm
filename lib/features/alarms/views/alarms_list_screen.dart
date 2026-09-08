@@ -217,33 +217,18 @@ class AlarmsListScreen extends ConsumerWidget {
             ),
 
 
-            // 5. Alarms Section Header with Add Alarm action
+            // 5. Alarms Section Header
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'ALARM SCHEDULES',
-                      style: GoogleFonts.outfit(
-                        color: AppColors.linenTextSecondary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(LucideIcons.plusCircle, color: AppColors.terracotta),
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AlarmEditScreen()),
-                        );
-                      },
-                    ),
-                  ],
+                child: Text(
+                  'ALARM SCHEDULES',
+                  style: GoogleFonts.outfit(
+                    color: AppColors.linenTextSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.2,
+                  ),
                 ),
               ),
             ),
