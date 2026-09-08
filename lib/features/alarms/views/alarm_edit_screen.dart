@@ -110,20 +110,22 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   Widget build(BuildContext context) {
     final podState = ref.watch(syncPodProvider);
     final tempAlarm = _buildCurrentAlarm();
+    final bg = AppColors.bg(context);
+    final textPrimary = AppColors.textPrimary(context);
 
     return Scaffold(
-      backgroundColor: AppColors.linenBackground,
+      backgroundColor: bg,
       appBar: AppBar(
-        backgroundColor: AppColors.linenBackground,
+        backgroundColor: bg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: AppColors.linenTextPrimary),
+          icon: Icon(LucideIcons.arrowLeft, color: textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.existingAlarm != null ? 'Edit Alarm' : 'New Sunrise Alarm',
           style: GoogleFonts.outfit(
-            color: AppColors.linenTextPrimary,
+            color: textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
@@ -854,9 +856,9 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppColors.linenSurface,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.linenSurfaceBorder),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: child,
     );
@@ -868,14 +870,14 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: AppColors.linenBackground,
+          color: AppColors.bg(context),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.linenSurfaceBorder),
+          border: Border.all(color: AppColors.border(context)),
         ),
         child: Text(
           label,
           style: GoogleFonts.outfit(
-            color: AppColors.linenTextSecondary,
+            color: AppColors.textSecondary(context),
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),

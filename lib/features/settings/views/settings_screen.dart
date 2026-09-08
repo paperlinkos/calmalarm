@@ -23,19 +23,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bg = AppColors.bg(context);
+    final surface = AppColors.surface(context);
+    final border = AppColors.border(context);
+    final textPrimary = AppColors.textPrimary(context);
+    final textSecondary = AppColors.textSecondary(context);
+
     return Scaffold(
-      backgroundColor: AppColors.linenBackground,
+      backgroundColor: bg,
       appBar: AppBar(
-        backgroundColor: AppColors.linenBackground,
+        backgroundColor: bg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: AppColors.linenTextPrimary),
+          icon: Icon(LucideIcons.arrowLeft, color: textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Settings & Sanctuary',
           style: GoogleFonts.outfit(
-            color: AppColors.linenTextPrimary,
+            color: textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
@@ -66,7 +72,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         child: Text(
                           'Reliable Background Alarms',
                           style: GoogleFonts.outfit(
-                            color: AppColors.linenTextPrimary,
+                            color: textPrimary,
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
                           ),
@@ -79,7 +85,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Text(
                     'To ensure your alarm always fires on time even in deep Doze mode, please allow CalmAlarm to ignore battery optimization.',
                     style: GoogleFonts.inter(
-                      color: AppColors.linenTextSecondary,
+                      color: textSecondary,
                       fontSize: 13,
                     ),
                   ),
@@ -112,7 +118,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Text(
               'DISPLAY & TIME',
               style: GoogleFonts.outfit(
-                color: AppColors.linenTextSecondary,
+                color: textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.1,
@@ -120,26 +126,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             const SizedBox(height: 10),
             _buildSettingsContainer(
+              context: context,
               children: [
                 SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     '24-Hour Time Format',
                     style: GoogleFonts.inter(
-                      color: AppColors.linenTextPrimary,
+                      color: textPrimary,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   subtitle: Text(
                     _use24Hour ? 'Example: 19:30' : 'Example: 7:30 PM',
-                    style: GoogleFonts.inter(color: AppColors.linenTextSecondary, fontSize: 12),
+                    style: GoogleFonts.inter(color: textSecondary, fontSize: 12),
                   ),
                   value: _use24Hour,
                   activeTrackColor: AppColors.terracotta,
                   onChanged: (val) => setState(() => _use24Hour = val),
                 ),
-                const Divider(),
+                Divider(color: border),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -147,7 +154,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Text(
                         'App Visual Theme',
                         style: GoogleFonts.inter(
-                          color: AppColors.linenTextPrimary,
+                          color: textPrimary,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -158,10 +165,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     DropdownButton<String>(
                       value: ref.watch(themeModeProvider).label,
                       underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: 'Linen Day', child: Text('Linen Day (Light)')),
-                        DropdownMenuItem(value: 'Midnight OLED', child: Text('Midnight (OLED Dark)')),
-                        DropdownMenuItem(value: 'System', child: Text('System Default')),
+                      dropdownColor: surface,
+                      style: GoogleFonts.outfit(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w600),
+                      items: [
+                        DropdownMenuItem(value: 'Linen Day', child: Text('Linen Day (Light)', style: TextStyle(color: textPrimary))),
+                        DropdownMenuItem(value: 'Midnight OLED', child: Text('Midnight (OLED Dark)', style: TextStyle(color: textPrimary))),
+                        DropdownMenuItem(value: 'System', child: Text('System Default', style: TextStyle(color: textPrimary))),
                       ],
                       onChanged: (val) {
                         if (val != null) {
@@ -186,7 +195,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Text(
               'ALARM DEFAULTS',
               style: GoogleFonts.outfit(
-                color: AppColors.linenTextSecondary,
+                color: textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.1,
@@ -194,6 +203,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             const SizedBox(height: 10),
             _buildSettingsContainer(
+              context: context,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -202,7 +212,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Text(
                         'Default Snooze',
                         style: GoogleFonts.inter(
-                          color: AppColors.linenTextPrimary,
+                          color: textPrimary,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -213,11 +223,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     DropdownButton<int>(
                       value: _defaultSnooze,
                       underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: 5, child: Text('5 min')),
-                        DropdownMenuItem(value: 9, child: Text('9 min')),
-                        DropdownMenuItem(value: 10, child: Text('10 min')),
-                        DropdownMenuItem(value: 15, child: Text('15 min')),
+                      dropdownColor: surface,
+                      style: GoogleFonts.outfit(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w600),
+                      items: [
+                        DropdownMenuItem(value: 5, child: Text('5 min', style: TextStyle(color: textPrimary))),
+                        DropdownMenuItem(value: 9, child: Text('9 min', style: TextStyle(color: textPrimary))),
+                        DropdownMenuItem(value: 10, child: Text('10 min', style: TextStyle(color: textPrimary))),
+                        DropdownMenuItem(value: 15, child: Text('15 min', style: TextStyle(color: textPrimary))),
                       ],
                       onChanged: (val) {
                         if (val != null) setState(() => _defaultSnooze = val);
@@ -225,7 +237,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ],
                 ),
-                const Divider(),
+                Divider(color: border),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -233,7 +245,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Text(
                         'Default Sunrise Fade',
                         style: GoogleFonts.inter(
-                          color: AppColors.linenTextPrimary,
+                          color: textPrimary,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -244,12 +256,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     DropdownButton<int>(
                       value: _defaultSunrise,
                       underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: 5, child: Text('5 min')),
-                        DropdownMenuItem(value: 10, child: Text('10 min')),
-                        DropdownMenuItem(value: 15, child: Text('15 min')),
-                        DropdownMenuItem(value: 20, child: Text('20 min')),
-                        DropdownMenuItem(value: 30, child: Text('30 min')),
+                      dropdownColor: surface,
+                      style: GoogleFonts.outfit(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w600),
+                      items: [
+                        DropdownMenuItem(value: 5, child: Text('5 min', style: TextStyle(color: textPrimary))),
+                        DropdownMenuItem(value: 10, child: Text('10 min', style: TextStyle(color: textPrimary))),
+                        DropdownMenuItem(value: 15, child: Text('15 min', style: TextStyle(color: textPrimary))),
+                        DropdownMenuItem(value: 20, child: Text('20 min', style: TextStyle(color: textPrimary))),
+                        DropdownMenuItem(value: 30, child: Text('30 min', style: TextStyle(color: textPrimary))),
                       ],
                       onChanged: (val) {
                         if (val != null) setState(() => _defaultSunrise = val);
@@ -266,7 +280,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Text(
               'EXPERIMENTS & TESTING',
               style: GoogleFonts.outfit(
-                color: AppColors.linenTextSecondary,
+                color: textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.1,
@@ -274,6 +288,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             const SizedBox(height: 10),
             _buildSettingsContainer(
+              context: context,
               children: [
                 ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -285,9 +300,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     child: const Icon(LucideIcons.flaskConical, color: AppColors.terracotta, size: 20),
                   ),
-                  title: Text('CalmAlarm Laboratory', style: GoogleFonts.outfit(fontWeight: FontWeight.w700)),
-                  subtitle: Text('Interactive test bench for sunrise scrubber, snooze simulation, doodle studio, & isometric garden.', style: GoogleFonts.inter(fontSize: 12)),
-                  trailing: const Icon(LucideIcons.chevronRight, size: 18, color: AppColors.linenTextSecondary),
+                  title: Text('CalmAlarm Laboratory', style: GoogleFonts.outfit(color: textPrimary, fontWeight: FontWeight.w700)),
+                  subtitle: Text('Interactive test bench for sunrise scrubber, snooze simulation, doodle studio, & isometric garden.', style: GoogleFonts.inter(color: textSecondary, fontSize: 12)),
+                  trailing: Icon(LucideIcons.chevronRight, size: 18, color: textSecondary),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -304,7 +319,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Text(
               'ABOUT CALMALARM',
               style: GoogleFonts.outfit(
-                color: AppColors.linenTextSecondary,
+                color: textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.1,
@@ -312,26 +327,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             const SizedBox(height: 10),
             _buildSettingsContainer(
+              context: context,
               children: [
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(LucideIcons.packageCheck, color: AppColors.terracotta),
-                  title: Text('Version 1.0.0 (F-Droid FOSS)', style: GoogleFonts.outfit(fontWeight: FontWeight.w700)),
-                  subtitle: Text('100% Free & Open Source Software', style: GoogleFonts.inter(fontSize: 12)),
+                  title: Text('Version 1.0.0 (F-Droid FOSS)', style: GoogleFonts.outfit(color: textPrimary, fontWeight: FontWeight.w700)),
+                  subtitle: Text('100% Free & Open Source Software', style: GoogleFonts.inter(color: textSecondary, fontSize: 12)),
                 ),
-                const Divider(),
+                Divider(color: border),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(LucideIcons.shield, color: AppColors.sageGreen),
-                  title: Text('Privacy First', style: GoogleFonts.outfit(fontWeight: FontWeight.w700)),
-                  subtitle: Text('Zero analytics, zero trackers, no proprietary Google SDKs.', style: GoogleFonts.inter(fontSize: 12)),
+                  title: Text('Privacy First', style: GoogleFonts.outfit(color: textPrimary, fontWeight: FontWeight.w700)),
+                  subtitle: Text('Zero analytics, zero trackers, no proprietary Google SDKs.', style: GoogleFonts.inter(color: textSecondary, fontSize: 12)),
                 ),
-                const Divider(),
+                Divider(color: border),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(LucideIcons.github, color: AppColors.linenTextPrimary),
-                  title: Text('Source Code & License', style: GoogleFonts.outfit(fontWeight: FontWeight.w700)),
-                  subtitle: Text('GNU General Public License v3.0', style: GoogleFonts.inter(fontSize: 12)),
+                  leading: Icon(LucideIcons.github, color: textPrimary),
+                  title: Text('Source Code & License', style: GoogleFonts.outfit(color: textPrimary, fontWeight: FontWeight.w700)),
+                  subtitle: Text('GNU General Public License v3.0', style: GoogleFonts.inter(color: textSecondary, fontSize: 12)),
                 ),
               ],
             ),
@@ -343,14 +359,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  Widget _buildSettingsContainer({required List<Widget> children}) {
+  Widget _buildSettingsContainer({required BuildContext context, required List<Widget> children}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.linenSurface,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.linenSurfaceBorder),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: Column(children: children),
     );

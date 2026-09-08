@@ -23,8 +23,14 @@ class AlarmsListScreen extends ConsumerWidget {
     final podState = ref.watch(syncPodProvider);
     final myMember = podState.members.firstWhere((m) => m.id == 'mem_1');
 
+    final bg = AppColors.bg(context);
+    final surface = AppColors.surface(context);
+    final border = AppColors.border(context);
+    final textPrimary = AppColors.textPrimary(context);
+    final textSecondary = AppColors.textSecondary(context);
+
     return Scaffold(
-      backgroundColor: AppColors.linenBackground,
+      backgroundColor: bg,
       body: SafeArea(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
@@ -43,7 +49,7 @@ class AlarmsListScreen extends ConsumerWidget {
                           Text(
                             'CalmAlarm',
                             style: GoogleFonts.outfit(
-                              color: AppColors.linenTextSecondary,
+                              color: textSecondary,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1.5,
@@ -52,7 +58,7 @@ class AlarmsListScreen extends ConsumerWidget {
                           Text(
                             'Morning Sanctuary',
                             style: GoogleFonts.playfairDisplay(
-                              color: AppColors.linenTextPrimary,
+                              color: textPrimary,
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
                             ),
@@ -140,9 +146,9 @@ class AlarmsListScreen extends ConsumerWidget {
                   clipBehavior: Clip.antiAlias,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.linenSurface,
+                    color: surface,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: AppColors.linenSurfaceBorder),
+                    border: Border.all(color: border),
                   ),
                   child: Row(
                     children: [
@@ -179,7 +185,7 @@ class AlarmsListScreen extends ConsumerWidget {
                                 Text(
                                   myMember.isAwake ? 'Bloomed Doodle' : 'Resting Bud',
                                   style: GoogleFonts.outfit(
-                                    color: AppColors.linenTextSecondary,
+                                    color: textSecondary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -190,7 +196,7 @@ class AlarmsListScreen extends ConsumerWidget {
                             Text(
                               myMember.character.name,
                               style: GoogleFonts.outfit(
-                                color: AppColors.linenTextPrimary,
+                                color: textPrimary,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -201,7 +207,7 @@ class AlarmsListScreen extends ConsumerWidget {
                             Text(
                               'Tap doodle plant to change species! Linked to ${podState.podName}.',
                               style: GoogleFonts.inter(
-                                color: AppColors.linenTextSecondary,
+                                color: textSecondary,
                                 fontSize: 11,
                               ),
                               maxLines: 2,
@@ -283,12 +289,12 @@ class AlarmsListScreen extends ConsumerWidget {
                               child: Container(
                                 padding: const EdgeInsets.all(18),
                                 decoration: BoxDecoration(
-                                  color: AppColors.linenSurface,
+                                  color: surface,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
                                     color: isNext
                                         ? AppColors.terracotta.withValues(alpha: 0.5)
-                                        : AppColors.linenSurfaceBorder,
+                                        : border,
                                     width: isNext ? 1.5 : 1.0,
                                   ),
                                   boxShadow: isNext
@@ -313,8 +319,8 @@ class AlarmsListScreen extends ConsumerWidget {
                                                 alarm.formattedTime,
                                                 style: GoogleFonts.outfit(
                                                   color: alarm.isEnabled
-                                                      ? AppColors.linenTextPrimary
-                                                      : AppColors.linenTextSecondary,
+                                                      ? textPrimary
+                                                      : textSecondary,
                                                   fontSize: 32,
                                                   fontWeight: FontWeight.w700,
                                                   letterSpacing: -1.0,
@@ -346,7 +352,7 @@ class AlarmsListScreen extends ConsumerWidget {
                                               Text(
                                                 alarm.label,
                                                 style: GoogleFonts.inter(
-                                                  color: AppColors.linenTextPrimary,
+                                                  color: textPrimary,
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w600,
                                                 ),
@@ -355,7 +361,7 @@ class AlarmsListScreen extends ConsumerWidget {
                                               Text(
                                                 '• ${alarm.repeatSummary}',
                                                 style: GoogleFonts.inter(
-                                                  color: AppColors.linenTextSecondary,
+                                                  color: textSecondary,
                                                   fontSize: 12,
                                                 ),
                                               ),
