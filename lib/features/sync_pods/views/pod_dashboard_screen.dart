@@ -7,6 +7,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_toast.dart';
 import '../../botanical_garden/widgets/doodle_flower_painter.dart';
 
+import '../widgets/streak_details_sheet.dart';
+
 class PodDashboardScreen extends ConsumerWidget {
   const PodDashboardScreen({super.key});
 
@@ -35,26 +37,36 @@ class PodDashboardScreen extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.sageGreen.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                const Icon(LucideIcons.flame, size: 15, color: AppColors.terracotta),
-                const SizedBox(width: 4),
-                Text(
-                  '${podState.sharedStreak} Day Streak',
-                  style: GoogleFonts.outfit(
-                    color: AppColors.terracotta,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
+          InkWell(
+            onTap: () => StreakDetailsSheet.show(context, podState),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              margin: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.terracotta.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.terracotta.withValues(alpha: 0.3),
                 ),
-              ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(LucideIcons.flame, size: 15, color: AppColors.terracotta),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${podState.sharedStreak}',
+                    style: GoogleFonts.outfit(
+                      color: AppColors.terracotta,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  const Icon(LucideIcons.chevronDown, size: 12, color: AppColors.terracotta),
+                ],
+              ),
             ),
           ),
         ],
@@ -162,7 +174,7 @@ class PodDashboardScreen extends ConsumerWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.53,
+                childAspectRatio: 0.48,
                 crossAxisSpacing: 14,
                 mainAxisSpacing: 14,
               ),
