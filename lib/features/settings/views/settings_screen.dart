@@ -67,81 +67,165 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            _buildSettingsContainer(
-              context: context,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: surface,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: border),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Top Row: Pod Name & Active Status Pill
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.terracotta.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(LucideIcons.users, size: 18, color: AppColors.terracotta),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              podState.podName,
+                              style: GoogleFonts.outfit(
+                                color: textPrimary,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              '${podState.members.length} Active Members • ${podState.sharedStreak}-Day Streak',
+                              style: GoogleFonts.inter(
+                                color: textSecondary,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.sageGreen.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          'ACTIVE',
+                          style: GoogleFonts.outfit(
+                            color: AppColors.sageGreen,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Middle Container: Invite Code Box with Copy Action
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: bg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: border),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'POD INVITE CODE',
+                              style: GoogleFonts.outfit(
+                                color: textSecondary,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              podState.podCode,
+                              style: GoogleFonts.outfit(
+                                color: AppColors.terracotta,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 2.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            AppToast.show(
+                              context,
+                              message: 'Pod Invite Code copied to clipboard!',
+                              type: ToastType.info,
+                              icon: LucideIcons.copy,
+                            );
+                          },
+                          icon: const Icon(LucideIcons.copy, size: 14),
+                          label: const Text('Share Code'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.terracotta,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // Bottom Row: Join or Create Another Pod Button
+                  InkWell(
+                    onTap: () {
+                      AppToast.show(
+                        context,
+                        message: 'Pod creation flow coming soon!',
+                        type: ToastType.info,
+                        icon: LucideIcons.sprout,
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                      child: Row(
                         children: [
+                          const Icon(LucideIcons.userPlus, size: 16, color: AppColors.sageGreen),
+                          const SizedBox(width: 8),
                           Text(
-                            podState.podName,
+                            'Join or Create Another Pod',
                             style: GoogleFonts.outfit(
                               color: textPrimary,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'INVITE CODE: ${podState.podCode}',
-                            style: GoogleFonts.outfit(
-                              color: AppColors.terracotta,
                               fontSize: 13,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1.5,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
+                          const Spacer(),
+                          Icon(LucideIcons.chevronRight, size: 16, color: textSecondary),
                         ],
                       ),
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        AppToast.show(
-                          context,
-                          message: 'Pod Code copied to clipboard!',
-                          type: ToastType.info,
-                          icon: LucideIcons.copy,
-                        );
-                      },
-                      icon: const Icon(LucideIcons.copy, size: 14),
-                      label: const Text('Share Code', style: TextStyle(fontSize: 11)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.terracotta,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                    ),
-                  ],
-                ),
-                Divider(color: border),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.sageGreen.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(LucideIcons.userPlus, size: 18, color: AppColors.sageGreen),
                   ),
-                  title: Text('Join or Create Another Pod', style: GoogleFonts.outfit(color: textPrimary, fontWeight: FontWeight.w700, fontSize: 14)),
-                  subtitle: Text('Sync alarm wake windows with friends & family', style: GoogleFonts.inter(color: textSecondary, fontSize: 12)),
-                  trailing: Icon(LucideIcons.chevronRight, size: 18, color: textSecondary),
-                  onTap: () {
-                    AppToast.show(
-                      context,
-                      message: 'Pod creation flow coming soon!',
-                      type: ToastType.info,
-                      icon: LucideIcons.sprout,
-                    );
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
 
             const SizedBox(height: 24),
