@@ -1,0 +1,32 @@
+AutoName: CalmAlarm
+Summary: Social & Ambient Wake App with Botanical Watercolor Characters
+Description: |-
+  CalmAlarm is a free and open-source social alarm application designed to replace
+  loud, aggressive wake-up calls with gentle visual sunrise lighting, subtle haptic pulses,
+  and shared botanical garden accountability pods across time zones.
+
+Categories:
+  - Time
+  - System
+  - Sports & Health
+
+License: GPL-3.0-or-later
+AuthorName: CalmAlarm Contributors
+SourceCode: https://github.com/calmalarm/calmalarm
+IssueTracker: https://github.com/calmalarm/calmalarm/issues
+
+RepoType: git
+Repo: https://github.com/calmalarm/calmalarm.git
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: 1.0.0
+    subdir: .
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk
+    sdkscanner: true
+    build:
+      - flutter pub get
+      - flutter build apk --release

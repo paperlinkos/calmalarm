@@ -1,0 +1,2 @@
+so i am thinking of making the garden page look like an actual garden and when we add more people there are interactions and all and also the plants planted by the members of the group can be colour coded or whatever and the screen should actually look like an isometric view of the garden and we can scroll around the garden and all and when we tap on a plant we can see the details of the plant and the person who planted it and all. and also maybe we can choose the a different style of art when we get there 
+
