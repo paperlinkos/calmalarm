@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_toast.dart';
 import '../../botanical_garden/widgets/doodle_flower_painter.dart';
 
+import '../widgets/animated_streak_canopy.dart';
 import '../widgets/streak_details_sheet.dart';
 
 class PodDashboardScreen extends ConsumerStatefulWidget {
@@ -16,10 +17,7 @@ class PodDashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<PodDashboardScreen> createState() => _PodDashboardScreenState();
 }
 
-class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _summaryController;
-  late Animation<double> _expandAnimation;
+class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen> {
   late ScrollController _scrollController;
   bool _isSummaryExpanded = false;
 
@@ -27,20 +25,11 @@ class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen>
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _summaryController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _expandAnimation = CurvedAnimation(
-      parent: _summaryController,
-      curve: Curves.easeOutCubic,
-    );
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
-    _summaryController.dispose();
     super.dispose();
   }
 
@@ -50,11 +39,6 @@ class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen>
     setState(() {
       _isSummaryExpanded = target;
     });
-    if (_isSummaryExpanded) {
-      _summaryController.forward();
-    } else {
-      _summaryController.reverse();
-    }
   }
 
   @override
@@ -66,8 +50,6 @@ class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen>
     final border = AppColors.border(context);
     final textPrimary = AppColors.textPrimary(context);
     final textSecondary = AppColors.textSecondary(context);
-
-    final awakeCount = podState.members.where((m) => m.isAwake).length;
 
     return Scaffold(
       backgroundColor: bg,
@@ -84,7 +66,7 @@ class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen>
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
-          // Tap Streak Pill for Full Info (No arrow, just flame + count)
+          // Tap Streak Pill for Full Info (Clean 🔥 12)
           InkWell(
             onTap: () => StreakDetailsSheet.show(context, podState),
             borderRadius: BorderRadius.circular(20),
@@ -166,7 +148,7 @@ class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen>
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _isSummaryExpanded ? 'Collapse streak summary' : 'Pull down for streak summary',
+                          _isSummaryExpanded ? 'Collapse streak canopy' : 'Pull down for streak canopy',
                           style: GoogleFonts.inter(
                             color: textSecondary.withValues(alpha: 0.7),
                             fontSize: 10,
@@ -178,109 +160,15 @@ class _PodDashboardScreenState extends ConsumerState<PodDashboardScreen>
                   ),
                 ),
 
-                // Pull-down Animated Quick Streak Summary Banner
-                SizeTransition(
-                  sizeFactor: _expandAnimation,
-                  axisAlignment: -1.0,
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 16, top: 4),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.terracotta.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: AppColors.terracotta.withValues(alpha: 0.35),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(LucideIcons.flame, size: 20, color: AppColors.terracotta),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'QUICK STREAK SUMMARY',
-                                style: GoogleFonts.outfit(
-                                  color: AppColors.terracotta,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 1.0,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(LucideIcons.x, size: 16),
-                              color: textSecondary,
-                              onPressed: () => _toggleSummary(false),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '🔥 ${podState.sharedStreak}-Day Shared Streak',
-                              style: GoogleFonts.outfit(
-                                color: textPrimary,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: AppColors.sageGreen.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                '$awakeCount / ${podState.members.length} Awake',
-                                style: GoogleFonts.inter(
-                                  color: AppColors.sageGreen,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        InkWell(
-                          onTap: () {
-                            _toggleSummary(false);
-                            StreakDetailsSheet.show(context, podState);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: surface,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: border),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Tap here for full streak breakdown & badges',
-                                  style: GoogleFonts.outfit(
-                                    color: AppColors.terracotta,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                const Icon(LucideIcons.arrowRight, size: 14, color: AppColors.terracotta),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                // Pull-down Animated Streak Canopy with Sparkle Ember Particles & Mini Avatars
+                AnimatedStreakCanopy(
+                  podState: podState,
+                  isExpanded: _isSummaryExpanded,
+                  onClose: () => _toggleSummary(false),
+                  onTapFull: () {
+                    _toggleSummary(false);
+                    StreakDetailsSheet.show(context, podState);
+                  },
                 ),
 
                 const SizedBox(height: 8),
